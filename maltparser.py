@@ -3,11 +3,11 @@ import json
 import pandas as pd
 from io import StringIO
 
+statute_df = pd.read_csv("data/RegulaminSejmuRzeczypospolitej.csv")
+example = statute_df.iloc[16].Content
+print(example)
+
 url = "http://ws.clarin-pl.eu/nlprest2/base/process"
-example = """
-Do projektu nie stosuje się przepisów o terminie wniesienia i doręczenia projektów. 
-Projekt uchwały rozpatruje się w jednym czytaniu.
-"""
 parameters = {
     "lpmn": 'any2txt|wcrft2|dependpar|out("conll_")|out("svg_")',
     "text": example,

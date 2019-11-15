@@ -2,6 +2,10 @@ import stanfordnlp
 import pandas as pd
 from io import StringIO
 
+statute_df = pd.read_csv("data/RegulaminSejmuRzeczypospolitej.csv")
+example = statute_df.iloc[16].Content
+print(example)
+
 MODELS_DIR = "./resources"
 
 stanfordnlp.download("pl", resource_dir=MODELS_DIR, confirm_if_exists=False, force=True)
@@ -12,10 +16,6 @@ config = {
     "models_dir": MODELS_DIR,
 }
 nlp = stanfordnlp.Pipeline(**config)
-example = """
-Do projektu nie stosuje się przepisów o terminie wniesienia i doręczenia projektów. 
-Projekt uchwały rozpatruje się w jednym czytaniu.
-"""
 doc = nlp(example)
 
 doc.sentences[0].print_tokens()
