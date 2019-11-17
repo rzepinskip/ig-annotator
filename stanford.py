@@ -1,46 +1,19 @@
-import stanfordnlp
 import pandas as pd
-from io import StringIO
+from igannotator.annotator import StanfordAnnotator
+import stanfordnlp
+import os
+
+RESOURCES_DIR = "resources"
+
+stanfordnlp.download(
+    "pl", resource_dir=RESOURCES_DIR, confirm_if_exists=False, force=True
+)
 
 statute_df = pd.read_csv("data/RegulaminSejmuRzeczypospolitej.csv")
 example = statute_df.iloc[16].Content
 print(example)
 
-MODELS_DIR = "./resources"
+annotator = StanfordAnnotator(RESOURCES_DIR)
+dfs = annotator.annotate(example)
 
-stanfordnlp.download("pl", resource_dir=MODELS_DIR, confirm_if_exists=False, force=True)
-
-config = {
-    "processors": "tokenize,pos,lemma,depparse",
-    "lang": "pl",
-    "models_dir": MODELS_DIR,
-}
-nlp = stanfordnlp.Pipeline(**config)
-doc = nlp(example)
-
-doc.sentences[0].print_tokens()
-doc.sentences[0].print_dependencies()
-
-conll = doc.conll_file.conll_as_string()
-# CoNLL-U https://universaldependencies.org/format.html
-cols = [
-    "id",
-    "form",
-    "lemma",
-    "upos",
-    "xpos",
-    "feats",
-    "head",
-    "deprel",
-    "deps",
-    "misc",
-]
-
-dfs = list()
-for sentence in conll.split("\n\n"):
-    df = pd.read_csv(StringIO(sentence), sep="\t", header=None, names=cols).set_index(
-        "id"
-    )
-    dfs.append(df)
-
-dfs[0]
+print(dfs[0])
