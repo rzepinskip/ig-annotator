@@ -16,6 +16,17 @@ Usage
 
 Installation
 ------------
+1. Create a virtual environment::
+
+    make create-environment
+
+2. Activate the virtual environment::
+
+    source .env/bin/activate
+
+3. Install dependencies::
+
+    pip install -r requirements.txt
 
 Requirements
 ^^^^^^^^^^^^
@@ -29,4 +40,4 @@ Licence
 Authors
 -------
 
-`igannotator` was written by `Pawel Rzepinski, Ryszard Szymanski < >`_.
+`igannotator` was written by `Pawel Rzepinski, Ryszard Szymanski`.
