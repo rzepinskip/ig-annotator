@@ -1,14 +1,16 @@
 import pandas as pd
 import stanfordnlp
 from io import StringIO
+from .annotator import BaseAnnotator
 
 
-class StanfordAnnotator:
-    def __init__(self):
-        self._annotator = stanfordnlp.Pipeline(**self._get_config())
+class StanfordAnnotator(BaseAnnotator):
+    def __init__(self, resources_dir):
+        self._annotator = stanfordnlp.Pipeline(**self._get_config(resources_dir))
 
-    def _get_config(self):
+    def _get_config(self, resources_dir):
         return {
+            "models_dir": resources_dir,
             "processors": "tokenize,pos,lemma,depparse",
             "lang": "pl",
         }
