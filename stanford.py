@@ -10,10 +10,34 @@ stanfordnlp.download(
 )
 
 statute_df = pd.read_csv("data/RegulaminSejmuRzeczypospolitej.csv")
-example = statute_df.iloc[16].Content
-print(example)
 
-annotator = StanfordAnnotator(RESOURCES_DIR)
-dfs = annotator.annotate(example)
+directory = './conllu/stanford3'
+if not os.path.exists(directory):
+    os.makedirs(directory)
+for index, row in statute_df.iterrows():
+    example = row.Content
+    print(example)
+    try:
+        annotator = StanfordAnnotator(RESOURCES_DIR)
+        dfs = annotator.annotate(example)
 
-print(dfs[0])
+        output_df = pd.DataFrame()
+        for df in dfs:
+            output_df = output_df.append(df)
+        if output_df.empty:
+            continue
+        output_df = output_df.reset_index(drop=True)
+        output_df.index += 1
+
+        print(output_df)
+
+        counter = 1
+        file = directory + '/stanford' + row.Article + '-' + str(int(row.Point)) + '.conllu'
+        while os.path.exists(file):
+            file = directory + '/stanford' + row.Article + '-' + str(int(row.Point)) + '(' + str(counter) + ')' + '.conllu'
+            counter += 1
+
+        with open(file, 'w+') as f:
+            output_df.to_csv(f, sep="\t", header=False)
+    except:
+        pass
