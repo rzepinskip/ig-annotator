@@ -39,5 +39,5 @@ for index, row in statute_df.iterrows():
 
         with open(file, 'w+') as f:
             output_df.to_csv(f, sep="\t", header=False)
-    except:
-        pass
+    except Exception as e:
+        print(e)
