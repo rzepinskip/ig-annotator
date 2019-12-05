@@ -9,6 +9,7 @@ RESOURCES_DIR = "resources"
 stanfordnlp.download(
     "pl", resource_dir=RESOURCES_DIR, confirm_if_exists=False, force=True
 )
+annotator = StanfordAnnotator(RESOURCES_DIR)
 
 directory = './conllu/goldStandard-stanford'
 if not os.path.exists(directory):
@@ -24,7 +25,6 @@ for line in lines:
     text = regex_result.group(2)
     print(text)
     try:
-        annotator = StanfordAnnotator(RESOURCES_DIR)
         dfs = annotator.annotate(text)
 
         output_df = pd.DataFrame()
