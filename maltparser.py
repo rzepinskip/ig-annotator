@@ -1,11 +1,23 @@
 import pandas as pd
 from igannotator.annotator import MultiparserAnnotator
+import os
 
 statute_df = pd.read_csv("data/RegulaminSejmuRzeczypospolitej.csv")
-example = statute_df.iloc[16].Content
-print(example)
+counter = 1
+for index, row in statute_df.iterrows():
+    example = row.Content
+    print(example)
 
+    annotator = MultiparserAnnotator()
+    dfs = annotator.annotate(example)
+    for df in dfs:
+        if df.empty:
+            continue
+        print(df)
 
-annotator = MultiparserAnnotator()
-dfs = annotator.annotate(example)
-print(dfs[0])
+        directory = './conllu/maltparser'
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        with open(directory + '/maltparser' + str(counter) + '.conllu', 'w+') as f:
+            df.to_csv(f, sep="\t", header=False)
+        counter += 1
