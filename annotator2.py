@@ -1,7 +1,8 @@
 from os import listdir
 from os.path import isfile, join
 import pandas as pd
-from igannotator.annotator.word import Word
+from igannotator.annotator.word import Word, annotate_df
+from igannotator.rulesexecutor.rules_executor import IGRulesExecutor
 
 
 def annotate_file(file_path):
@@ -22,12 +23,23 @@ def annotate_file(file_path):
 
     print(root.show_children_subtrees())
 
+    return root
+
 
 directory = "conllu/goldStandard-stanford"
+
+executor =IGRulesExecutor()
+
 for f in listdir(directory):
     file_path = join(directory, f)
     if isfile(file_path):
-        # try:
-            annotate_file(file_path)
-        # except Exception as e:
-        #     print(str(e) + " in " + f)
+        with open(file_path, 'r+') as f:
+            df = pd.read_csv(f, sep="\t", header=None)
+            tree = annotate_df(df)
+            
+            executor.execute(tree)
+            print(tree.show_children_subtrees())
+
+
+
+
