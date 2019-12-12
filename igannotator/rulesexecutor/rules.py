@@ -12,10 +12,12 @@ class IGElement(Enum):
     SEPARATOR = 4
     DEONTIC = 5
 
+
 @dataclass
-class IGTag():
-    words: List[Tuple[str,str]]
+class IGTag:
+    words: List[Tuple[str, str]]
     tag_name: IGElement
+
 
 class Rule(ABC):
     @abstractmethod
@@ -29,11 +31,15 @@ def find_word_tag(annotations: List[IGTag], word_id: str) -> IGTag:
             if id == word_id:
                 return ann
 
-def find_node_with_tag(annotations: List[IGTag], tree: LexicalTree, ig: IGElement) -> LexicalTree:
+
+def find_node_with_tag(
+    annotations: List[IGTag], tree: LexicalTree, ig: IGElement
+) -> LexicalTree:
     for t in tree.get_all_descendants():
         if find_word_igelement(annotations, t.id) == ig:
             return t
     return None
+
 
 def find_word_igelement(annotations: List[IGTag], word_id: str) -> IGElement:
     tag = find_word_tag(annotations, word_id)
@@ -49,29 +55,40 @@ def find_word_igelement(annotations: List[IGTag], word_id: str) -> IGElement:
 class OneRootIsAimOrDeontic(Rule):
     def apply(self, tree: LexicalTree, annotations: List[IGTag]):
         if len([n for n in tree.get_all_descendants() if n.relation == "root"]) != 1:
-            return 
+            return
 
         if tree.lemm in ["musieć", "móc", "obowiązany"]:
-            annotations.append(IGTag(words = [(tree.id, tree.value)], tag_name = IGElement.DEONTIC))
+            annotations.append(
+                IGTag(words=[(tree.id, tree.value)], tag_name=IGElement.DEONTIC)
+            )
         else:
-            annotations.append(IGTag(words = [(tree.id, tree.value)], tag_name = IGElement.AIM))
+            annotations.append(
+                IGTag(words=[(tree.id, tree.value)], tag_name=IGElement.AIM)
+            )
 
 
 # 2. Jeżeli korzeniem jest deontic to aIm jest root -> xcomp
 class AimIsXcompFromDeonticRoot(Rule):
     def apply(self, tree: LexicalTree, annotations: List[IGTag]):
-        if tree.relation == "root" and find_word_igelement(annotations, tree.id) == IGElement.DEONTIC:
+        if (
+            tree.relation == "root"
+            and find_word_igelement(annotations, tree.id) == IGElement.DEONTIC
+        ):
             for c in tree.children:
                 if c.relation == "xcomp":
-                    annotations.append(IGTag(words = [(c.id, c.value)], tag_name = IGElement.AIM))
+                    annotations.append(
+                        IGTag(words=[(c.id, c.value)], tag_name=IGElement.AIM)
+                    )
 
-#3. Jeżeli w poddrzewie aIm jest:
-#    - expl:pv - oznacza "się" 
+
+# 3. Jeżeli w poddrzewie aIm jest:
+#    - expl:pv - oznacza "się"
 #    - aux:pass - oznacza stronę bierną np. "być przyznane"
 #    - advmod o polarity:Neg - zmienia znaczenie słowa (wg dokumentacji), tutaj przeczenie
 #    - cop - jest/są np. "są realizowane"
-#    
-#to te części są dodawane do aIm.
+#
+# to te części są dodawane do aIm.
+
 
 class AimExtension(Rule):
     def apply(self, tree: LexicalTree, annotations: List[IGTag]):
@@ -83,10 +100,11 @@ class AimExtension(Rule):
         aim_tag = find_word_tag(annotations, aim_node.id)
 
         for c in aim_node.children:
-            if c.relation in ["expl:pv", "aux:pass", "cop"] :
+            if c.relation in ["expl:pv", "aux:pass", "cop"]:
                 aim_tag.words.append((c.id, c.value))
             if c.relation == "advmod" and c.polarity == "Polarity=Neg":
                 aim_tag.words.append((c.id, c.value))
+
 
 # 4. Attribute oznaczany jako:
 #     a) root -> nsubj + poddrzewa
@@ -97,12 +115,22 @@ class NsubjIsAttribute(Rule):
         for c in tree.children:
             if c.relation == "nsubj":
                 found_nsubj = True
-                annotations.append(IGTag(words = [(cc.id, cc.value) for cc in c.get_all_descendants()], tag_name = IGElement.ATTRIBUTE) )
+                annotations.append(
+                    IGTag(
+                        words=[(cc.id, cc.value) for cc in c.get_all_descendants()],
+                        tag_name=IGElement.ATTRIBUTE,
+                    )
+                )
 
         if not found_nsubj:
             for c in tree.children:
                 if c.relation == "advcl":
-                    annotations.append(IGTag(words = [(cc.id, cc.value) for cc in c.get_all_descendants()], tag_name = IGElement.ATTRIBUTE) )
+                    annotations.append(
+                        IGTag(
+                            words=[(cc.id, cc.value) for cc in c.get_all_descendants()],
+                            tag_name=IGElement.ATTRIBUTE,
+                        )
+                    )
 
 
 # TODO:
@@ -115,7 +143,9 @@ class ObjsFromAimAreObjects(Rule):
 
         for c in tree.children:
             if c.relation in ["obj", "dobj", "obl"]:
-                annotations.append(IGTag(words = [(c.id, c.value)], tag_name = IGElement.OBJECT))
+                annotations.append(
+                    IGTag(words=[(c.id, c.value)], tag_name=IGElement.OBJECT)
+                )
 
 
 class PunctFromAimIsSeparator(Rule):
@@ -125,4 +155,7 @@ class PunctFromAimIsSeparator(Rule):
 
         for c in tree.children:
             if c.relation == "punct":
-                annotations.append(IGTag(words = [(c.id, c.value)], tag_name = IGElement.SEPARATOR))
+                annotations.append(
+                    IGTag(words=[(c.id, c.value)], tag_name=IGElement.SEPARATOR)
+                )
+
