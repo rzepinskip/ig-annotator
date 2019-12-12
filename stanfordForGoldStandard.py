@@ -11,13 +11,13 @@ stanfordnlp.download(
 )
 annotator = StanfordAnnotator(RESOURCES_DIR)
 
-directory = './conllu/goldStandard-stanford'
+directory = "./data/conllu/goldStandard-stanford"
 if not os.path.exists(directory):
     os.makedirs(directory)
 
 with open("data/nauka_1.txt", "r+", encoding="utf8") as input_file:
     content = input_file.read()
-lines = [line for line in content.split('\n\n') if not line.startswith('--')]
+lines = [line for line in content.split("\n\n") if not line.startswith("--")]
 for line in lines:
     line_regex = re.compile("^([0-9]*)\\. ((?s).*)$")
     regex_result = line_regex.search(line)
@@ -38,12 +38,14 @@ for line in lines:
         print(output_df)
 
         counter = 1
-        file = directory + '/stanford' + number + '.conllu'
+        file = directory + "/stanford" + number + ".conllu"
         while os.path.exists(file):
-            file = directory + '/stanford' + number + '(' + str(counter) + ')' + '.conllu'
+            file = (
+                directory + "/stanford" + number + "(" + str(counter) + ")" + ".conllu"
+            )
             counter += 1
 
-        with open(file, 'w+') as f:
+        with open(file, "w+") as f:
             output_df.to_csv(f, sep="\t", header=False)
     except Exception as e:
         print(e)

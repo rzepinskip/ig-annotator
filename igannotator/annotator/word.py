@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class LexicalTree:
     def __init__(self, row):
         self.id = row[0]
@@ -23,15 +24,20 @@ class LexicalTree:
         return self.value + children_str
 
     def get_all_descendants(self):
-        descendants = [self] + [y for x in self.children for y in x.get_all_descendants()]
+        descendants = [self] + [
+            y for x in self.children for y in x.get_all_descendants()
+        ]
         descendants.sort(key=lambda x: x.id)
         return descendants
 
     def show_children_subtrees(self):
-        return f"{self.value}:\n\t" + "\n\t".join([f"{x.tag}, {x.relation}:{x.get_all_descendants()}" for x in self.children])
+        return f"{self.value}:\n\t" + "\n\t".join(
+            [f"{x.tag}, {x.relation}:{x.get_all_descendants()}" for x in self.children]
+        )
 
     def to_connlu(self):
         return ""
+
 
 def annotate_df(df):
 
