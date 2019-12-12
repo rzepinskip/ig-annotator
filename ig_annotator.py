@@ -33,8 +33,14 @@ def write_output_to_mae(output_file, tree, tags):
         output.write("<ADICO_test_1>\n")
 
         sentence = ""
+        id_to_position = dict()
         for x in tree.get_all_descendants():
-            sentence += " " + x.value if x.tag != "PUNCT" and x.id != 1 else x.value
+            if x.tag != "PUNCT" and x.id != 1:
+                id_to_position[x.id] = len(sentence) + 1
+                sentence += " " + x.value
+            else:
+                id_to_position[x.id] = len(sentence)
+                sentence += x.value
         output.write(f"<TEXT><![CDATA[{sentence}]]></TEXT>\n")
 
         output.write("<TAGS>\n")
@@ -47,9 +53,9 @@ def write_output_to_mae(output_file, tree, tags):
             "IGElement.DEONTIC": "Deontic",
         }
         for tag in tags:
-            words = [x[1] for x in sorted(tag.words, key=lambda x: x[0])]
-            start = sentence.find(words[0])
-            stop = sentence.find(words[-1]) + len(words[-1])
+            words_with_ids = sorted(tag.words, key=lambda x: x[0])
+            start = id_to_position[words_with_ids[0][0]]
+            stop = id_to_position[words_with_ids[-1][0]] + len(words_with_ids[-1][1])
             spans = f"{start}~{stop}"
             output.write(
                 f'<{tag_names[str(tag.tag_name)]} id="x{id}" spans="{spans}" text="{sentence[start:stop]}" />\n'
