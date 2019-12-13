@@ -1,19 +1,9 @@
 from abc import ABC, abstractmethod
 from ..annotator.word import LexicalTree
-from enum import Enum
 from typing import List, Tuple
 from dataclasses import dataclass
-import requests
-import json
-
-
-class IGElement(Enum):
-    AIM = 1
-    ATTRIBUTE = 2
-    OBJECT = 3
-    SEPARATOR = 4
-    DEONTIC = 5
-    ACTOR = 6
+from igannotator.rulesexecutor.noun_classifier import nounClassifier
+from igannotator.rulesexecutor.ig_element import IGElement
 
 
 @dataclass
@@ -146,38 +136,14 @@ class ObjsFromAimAreObjects(Rule):
 
         for c in tree.children:
             if c.relation in ["obj", "dobj", "obl"]:
-                noun_type = self.nounClassifier(c.lemm)
+                noun_type = nounClassifier(c.lemm)
                 if noun_type is not None:
                     annotations.append(
                         IGTag(
                             words=[(c.id, c.value)],
-                            # words=[(cc.id, cc.value) for cc in c.get_all_descendants()],
                             tag_name=noun_type
                         )
                     )
-
-    API_URL = "http://api.slowosiec.clarin-pl.eu:80/plwordnet-api/"
-    ACTOR_DOMAINS = ['os', 'grp']
-
-    def nounClassifier(self, word):
-        """Classifies noun as actor o object
-
-        Parameters
-        ----------
-        word : str
-            Lematized noun to be classified (case-insensitive).
-        """
-        
-        word = word.lower()
-        response_raw = requests.get(f'{self.API_URL}senses/search?lemma={word}&&&partOfSpeech=noun&&&&&&')
-        response = json.loads(response_raw.content)
-        response = [item for item in response['content'] if item['lemma']['word'].lower() == word]
-        if len(response) == 0:
-            return None
-        if any(item['domain']['name'][item['domain']['name'].rfind('_')+1 : ] in self.ACTOR_DOMAINS for item in response): 
-            return IGElement.ACTOR
-        else:
-            return IGElement.OBJECT
 
 
 class PunctFromAimIsSeparator(Rule):
