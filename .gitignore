@@ -1,6 +1,8 @@
 .vscode/
 .env/
 resources/
+data/**/*.conllu
+data/**/*.xml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

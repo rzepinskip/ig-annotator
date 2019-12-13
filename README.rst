@@ -28,6 +28,15 @@ Installation
 
     pip install -r requirements.txt
 
+4. Generate CONLLU files::
+
+    python stanfordForGoldStandard.py 
+
+5. Annotate CONNLU files in specified directory::
+
+    python ig_annotator.py data/conllu/goldStandard-stanford
+
+
 Requirements
 ^^^^^^^^^^^^
 

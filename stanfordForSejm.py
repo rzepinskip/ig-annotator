@@ -11,7 +11,7 @@ stanfordnlp.download(
 
 statute_df = pd.read_csv("data/RegulaminSejmuRzeczypospolitej.csv")
 
-directory = './conllu/stanford3'
+directory = "./data/conllu/stanford3"
 if not os.path.exists(directory):
     os.makedirs(directory)
 for index, row in statute_df.iterrows():
@@ -32,12 +32,29 @@ for index, row in statute_df.iterrows():
         print(output_df)
 
         counter = 1
-        file = directory + '/stanford' + row.Article + '-' + str(int(row.Point)) + '.conllu'
+        file = (
+            directory
+            + "/stanford"
+            + row.Article
+            + "-"
+            + str(int(row.Point))
+            + ".conllu"
+        )
         while os.path.exists(file):
-            file = directory + '/stanford' + row.Article + '-' + str(int(row.Point)) + '(' + str(counter) + ')' + '.conllu'
+            file = (
+                directory
+                + "/stanford"
+                + row.Article
+                + "-"
+                + str(int(row.Point))
+                + "("
+                + str(counter)
+                + ")"
+                + ".conllu"
+            )
             counter += 1
 
-        with open(file, 'w+') as f:
+        with open(file, "w+") as f:
             output_df.to_csv(f, sep="\t", header=False)
     except Exception as e:
         print(e)
