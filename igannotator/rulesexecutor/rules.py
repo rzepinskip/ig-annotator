@@ -135,12 +135,12 @@ class ObjsFromAimAreObjects(Rule):
             return
 
         for c in tree.children:
-            if c.relation in ["obj", "dobj", "obl"]:
+            if c.relation in ["obj", "iobl"]:
                 noun_type = nounClassifier(c.lemm)
                 if noun_type is not None:
                     annotations.append(
                         IGTag(
-                            words=[(c.id, c.value)],
+                            words=[(cc.id, cc.value) for cc in c.get_all_descendants()],
                             tag_name=noun_type
                         )
                     )
