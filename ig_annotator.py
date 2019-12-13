@@ -28,7 +28,7 @@ def annotate_file(file_path):
 
 
 def write_output_to_mae(output_file, tree, tags):
-    with open(output_file, "w") as output:
+    with open(output_file, "w", encoding='utf-8') as output:
         output.write('<?xml version="1.0" encoding="UTF-8" ?>\n')
         output.write("<ADICO_test_1>\n")
 
@@ -49,6 +49,7 @@ def write_output_to_mae(output_file, tree, tags):
             "IGElement.AIM": "aIm",
             "IGElement.ATTRIBUTE": "Attribute",
             "IGElement.OBJECT": "oBject",
+            "IGElement.ACTOR": "aCtor",
             "IGElement.SEPARATOR": "SEPARATOR",
             "IGElement.DEONTIC": "Deontic",
         }
@@ -74,7 +75,7 @@ def annotate_files(directory):
     for input in listdir(directory):
         file_path = pathlib.Path(directory) / pathlib.Path(input)
         if file_path.is_file() and file_path.suffix == ".conllu":
-            with open(file_path, "r+") as input:
+            with open(file_path, "r+", encoding='utf-8') as input:
                 df = pd.read_csv(input, sep="\t", header=None)
                 tree = annotate_df(df)
                 tags = executor.execute(tree)

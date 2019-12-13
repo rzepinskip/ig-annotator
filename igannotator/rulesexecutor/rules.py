@@ -1,16 +1,9 @@
 from abc import ABC, abstractmethod
 from ..annotator.word import LexicalTree
-from enum import Enum
 from typing import List, Tuple
 from dataclasses import dataclass
-
-
-class IGElement(Enum):
-    AIM = 1
-    ATTRIBUTE = 2
-    OBJECT = 3
-    SEPARATOR = 4
-    DEONTIC = 5
+from igannotator.rulesexecutor.noun_classifier import nounClassifier
+from igannotator.rulesexecutor.ig_element import IGElement
 
 
 @dataclass
@@ -143,9 +136,14 @@ class ObjsFromAimAreObjects(Rule):
 
         for c in tree.children:
             if c.relation in ["obj", "dobj", "obl"]:
-                annotations.append(
-                    IGTag(words=[(c.id, c.value)], tag_name=IGElement.OBJECT)
-                )
+                noun_type = nounClassifier(c.lemm)
+                if noun_type is not None:
+                    annotations.append(
+                        IGTag(
+                            words=[(c.id, c.value)],
+                            tag_name=noun_type
+                        )
+                    )
 
 
 class PunctFromAimIsSeparator(Rule):
