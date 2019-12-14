@@ -1,11 +1,11 @@
 from collections import defaultdict
-from igannotator.annotator.word import LexicalTree
+from igannotator.annotator.lexical_tree import LexcialTreeNode
 from igannotator.rulesexecutor.rules import IGTag
 from typing import List, Tuple, Dict
 
 
 def get_sentence_and_tags(
-    tree: LexicalTree, tags: List[IGTag]
+    tree: LexcialTreeNode, tags: List[IGTag]
 ) -> Tuple[str, List[Tuple[str, int, int, str]]]:
     sentence = ""
     id_to_position = dict()
@@ -39,7 +39,7 @@ def get_sentence_and_tags(
 
 
 def write_mae_representation(
-    output_file, trees_with_tags: List[Tuple[LexicalTree, List[IGTag]]]
+    output_file, trees_with_tags: List[Tuple[LexcialTreeNode, List[IGTag]]]
 ):
     sentences_with_tags = [
         get_sentence_and_tags(tree, tags) for tree, tags in trees_with_tags

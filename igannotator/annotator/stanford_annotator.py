@@ -37,5 +37,7 @@ class StanfordAnnotator(BaseAnnotator):
         doc_response = self._annotator(text)
         conll_string = doc_response.conll_file.conll_as_string()
         return [
-            self._sentence_to_df(sentence) for sentence in conll_string.split("\n\n")
+            self._sentence_to_df(sentence)
+            for sentence in conll_string.split("\n\n")
+            if len(sentence) > 0
         ]

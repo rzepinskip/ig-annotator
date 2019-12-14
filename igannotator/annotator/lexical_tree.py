@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-class LexicalTree:
+class LexcialTreeNode:
     def __init__(self, row):
         self.id = row[0]
         self.value = row[1]
@@ -38,19 +38,18 @@ class LexicalTree:
     def to_connlu(self):
         return ""
 
+    @staticmethod
+    def from_conllu_df(df):
+        id_to_word = dict()
+        for index, row in df.iterrows():
+            node = LexcialTreeNode(row)
+            id_to_word[node.id] = node
 
-def annotate_df(df):
+        root = None
+        for node in id_to_word.values():
+            if node.parent == 0:
+                root = node
+                continue
+            id_to_word[node.parent].children.append(node)
 
-    id_to_word = dict()
-    for index, row in df.iterrows():
-        node = LexicalTree(row)
-        id_to_word[node.id] = node
-
-    root = None
-    for node in id_to_word.values():
-        if node.parent == 0:
-            root = node
-            continue
-        id_to_word[node.parent].children.append(node)
-
-    return root
+        return root
