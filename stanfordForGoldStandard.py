@@ -23,8 +23,12 @@ mae_data = list()
 for line in lines:
     line_regex = re.compile("^([0-9]*)\\. ((?s).*)$")
     regex_result = line_regex.search(line)
-    number = regex_result.group(1)
-    sentence = regex_result.group(2)
+
+    if regex_result is not None:
+        number = regex_result.group(1)
+        sentence = regex_result.group(2)
+    else:
+        raise ValueError("Incorrrect format")
 
     tree, tags = annotator.annotate(sentence)
 

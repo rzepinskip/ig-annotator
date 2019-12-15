@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from dataclasses import dataclass
 
 from igannotator.annotator.lexical_tree import LexcialTreeNode
@@ -19,16 +19,18 @@ class Rule(ABC):
         raise NotImplementedError()
 
 
-def find_word_tag(annotations: List[IGTag], word_id: str) -> IGTag:
+def find_word_tag(annotations: List[IGTag], word_id: str) -> Optional[IGTag]:
     for ann in annotations:
         for id, word in ann.words:
             if id == word_id:
                 return ann
 
+    return None
+
 
 def find_node_with_tag(
     annotations: List[IGTag], tree: LexcialTreeNode, ig: IGElement
-) -> LexcialTreeNode:
+) -> Optional[LexcialTreeNode]:
     for t in tree.get_all_descendants():
         if find_word_igelement(annotations, t.id) == ig:
             return t

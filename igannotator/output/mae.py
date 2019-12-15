@@ -50,7 +50,7 @@ def write_mae_representation(
         output.write('<?xml version="1.0" encoding="UTF-8" ?>\n')
         output.write("<ADICO_test_1>\n")
 
-        text = "\n".join([sentence for sentence, _ in sentences_with_tags])
+        text = "\n\n".join([sentence for sentence, _ in sentences_with_tags])
         output.write(f"<TEXT><![CDATA[{text}]]></TEXT>\n")
 
         output.write("<TAGS>\n")
@@ -72,7 +72,7 @@ def write_mae_representation(
                 tag_repr = f'<{tag_name} id="{tag_to_shorthand[tag_name]}{tag_ids[tag_name]}" spans="{spans}" text="{sentence[start:stop]}" />\n'
                 output.write(tag_repr)
                 tag_ids[tag_name] += 1
-            offset += len(sentence) + 1
+            offset += len(sentence) + 2
 
         output.write("</TAGS>\n")
 
