@@ -53,3 +53,15 @@ class LexcialTreeNode:
             id_to_word[node.parent].children.append(node)
 
         return root
+
+    @staticmethod
+    def from_sentence(sentence: str):
+        def get_empty_data(id, word):
+            return (id, word, "", "", "", "", "", "")
+
+        words = sentence.split(" ")
+        root = LexcialTreeNode(get_empty_data(1, words[0]))
+        for id, word in enumerate(words[1:], 2):
+            root.children.append(LexcialTreeNode(get_empty_data(id, word)))
+
+        return root

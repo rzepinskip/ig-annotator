@@ -29,9 +29,7 @@ class StanfordAnnotator(BaseAnnotator):
             "deps",
             "misc",
         ]
-        return pd.read_csv(
-            StringIO(sentence), sep="\t", header=None, names=cols
-        ).set_index("id")
+        return pd.read_csv(StringIO(sentence), sep="\t", header=None, names=cols)
 
     def annotate(self, text: str):
         doc_response = self._annotator(text)
