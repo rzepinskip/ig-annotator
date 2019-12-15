@@ -43,6 +43,6 @@ setup(
     ],
 
     entry_points= {
-        'console_scripts': ['ig_annotator = igannotator.main:annotate_file']
+        'console_scripts': ['ig_annotator = igannotator.main:console_entry']
     }
 )
