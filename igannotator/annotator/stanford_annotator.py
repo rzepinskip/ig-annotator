@@ -7,6 +7,7 @@ from igannotator.annotator.annotator import BaseAnnotator
 
 class StanfordAnnotator(BaseAnnotator):
     def __init__(self):
+        super().__init__()
         self._annotator = stanfordnlp.Pipeline(**self._get_config())
 
     def _get_config(self):
