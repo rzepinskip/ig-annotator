@@ -6,9 +6,7 @@ import re
 from igannotator.annotator import IgAnnotator
 from igannotator.output.mae import write_mae_representation
 
-RESOURCES_DIR = "resources"
-
-annotator = IgAnnotator(RESOURCES_DIR)
+annotator = IgAnnotator()
 
 directory = "data/conllu/goldStandard-stanford"
 if not os.path.exists(directory):
