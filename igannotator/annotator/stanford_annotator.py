@@ -6,12 +6,12 @@ from igannotator.annotator.annotator import BaseAnnotator
 
 
 class StanfordAnnotator(BaseAnnotator):
-    def __init__(self, resources_dir):
-        self._annotator = stanfordnlp.Pipeline(**self._get_config(resources_dir))
+    def __init__(self):
+        self._annotator = stanfordnlp.Pipeline(**self._get_config())
 
-    def _get_config(self, resources_dir):
+    def _get_config(self):
         return {
-            "models_dir": resources_dir,
+            "models_dir": self.resources_dir,
             "processors": "tokenize,pos,lemma,depparse",
             "lang": "pl",
         }

@@ -1,11 +1,9 @@
 import click
 import warnings
+import pathlib
 
 from igannotator.output.mae import write_mae_representation
 from igannotator.annotator import IgAnnotator
-
-RESOURCES_DIR = "resources"
-
 
 @click.command()
 @click.argument("input", type=click.Path(exists=True))
@@ -14,7 +12,7 @@ def annotate_file(input, output):
     with open(input, "r") as f:
         input_text = f.read()
 
-    annotator = IgAnnotator(RESOURCES_DIR)
+    annotator = IgAnnotator()
     sentences = [x for x in input_text.split("\n\n") if len(x) > 0]
 
     mae_data = list()

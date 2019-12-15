@@ -4,14 +4,12 @@ import warnings
 from igannotator.output.mae import write_mae_representation
 from igannotator.annotator import IgAnnotator
 
-RESOURCES_DIR = "resources"
-
 
 def annotate_file(input_file, output_file):
     with open(input_file, "r") as f:
         input_text = f.read()
 
-    annotator = IgAnnotator(RESOURCES_DIR)
+    annotator = IgAnnotator()
     sentences = [x for x in input_text.split("\n\n") if len(x) > 0]
 
     mae_data = list()
