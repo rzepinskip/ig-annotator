@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ADICO_test_1>
+<TEXT><![CDATA[Ala ma kota.
+Kot ma Alę.
+Bartek je zupę.]]></TEXT>
+<TAGS>
+<aIm id="a0" spans="4~6" text="ma" />
+<Attribute id="A0" spans="0~3" text="Ala" />
+<SEPARATOR id="S0" spans="11~12" text="." />
+<aIm id="a1" spans="17~19" text="ma" />
+<Attribute id="A1" spans="13~16" text="Kot" />
+<SEPARATOR id="S1" spans="23~24" text="." />
+<aIm id="a2" spans="35~39" text="zupę" />
+<Attribute id="A2" spans="25~31" text="Bartek" />
+<SEPARATOR id="S2" spans="39~40" text="." />
+</TAGS>
+</ADICO_test_1>

@@ -36,17 +36,14 @@ Installation
 
     python ig_annotator.py data/conllu/goldStandard-stanford
 
-
-Requirements
-^^^^^^^^^^^^
-
-Compatibility
--------------
-
-Licence
+Example 
 -------
 
-Authors
--------
+1. Run annotation for example (sentence are separated by empty line)::
 
-`igannotator` was written by `Pawel Rzepinski, Ryszard Szymanski`.
+    python ig_annotator.py data/simple_example.txt simple_example-ouput.xml
+
+2. Run annotation for `nauka_1.txt` file::
+
+    python stanfordForGoldStandard.py 
+
