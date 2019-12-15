@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from ..annotator.lexical_tree import LexcialTreeNode
 from typing import List, Tuple
 from dataclasses import dataclass
+
+from igannotator.annotator.lexical_tree import LexcialTreeNode
 from igannotator.rulesexecutor.noun_classifier import nounClassifier
 from igannotator.rulesexecutor.ig_element import IGElement
 
@@ -141,7 +142,7 @@ class ObjsFromAimAreObjects(Rule):
                     annotations.append(
                         IGTag(
                             words=[(cc.id, cc.value) for cc in c.get_all_descendants()],
-                            tag_name=noun_type
+                            tag_name=noun_type,
                         )
                     )
 

@@ -1,6 +1,7 @@
 import click
-from igannotator.output.mae import write_mae_representation
 import warnings
+
+from igannotator.output.mae import write_mae_representation
 from igannotator.annotator import IgAnnotator
 
 RESOURCES_DIR = "resources"

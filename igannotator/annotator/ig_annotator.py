@@ -1,12 +1,13 @@
 import pandas as pd
 from typing import List, Tuple, Optional
+import stanfordnlp
+import warnings
+
 from igannotator.annotator.annotator import BaseAnnotator
 from igannotator.annotator.lexical_tree import LexcialTreeNode
 from igannotator.rulesexecutor.rules import IGTag
 from igannotator.annotator import StanfordAnnotator
-import stanfordnlp
 from igannotator.rulesexecutor.rules_executor import IGRulesExecutor
-import warnings
 
 
 class IgAnnotator(BaseAnnotator):

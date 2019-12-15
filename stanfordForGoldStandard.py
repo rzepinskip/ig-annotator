@@ -1,8 +1,9 @@
 import pandas as pd
-from igannotator.annotator import IgAnnotator
 import stanfordnlp
 import os
 import re
+
+from igannotator.annotator import IgAnnotator
 from igannotator.output.mae import write_mae_representation
 
 RESOURCES_DIR = "resources"

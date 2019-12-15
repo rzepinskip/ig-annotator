@@ -1,5 +1,6 @@
-from igannotator.annotator.lexical_tree import LexcialTreeNode
 from typing import List
+
+from igannotator.annotator.lexical_tree import LexcialTreeNode
 from igannotator.rulesexecutor.rules import (
     IGTag,
     AimExtension,
