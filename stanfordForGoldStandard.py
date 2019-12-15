@@ -1,51 +1,37 @@
 import pandas as pd
-from igannotator.annotator import StanfordAnnotator
 import stanfordnlp
 import os
 import re
 
+from igannotator.annotator import IgAnnotator
+from igannotator.output.mae import write_mae_representation
+
 RESOURCES_DIR = "resources"
 
-stanfordnlp.download(
-    "pl", resource_dir=RESOURCES_DIR, confirm_if_exists=False, force=True
-)
-annotator = StanfordAnnotator(RESOURCES_DIR)
+annotator = IgAnnotator(RESOURCES_DIR)
 
-directory = "./data/conllu/goldStandard-stanford"
+directory = "data/conllu/goldStandard-stanford"
 if not os.path.exists(directory):
     os.makedirs(directory)
 
 with open("data/nauka_1.txt", "r+", encoding="utf8") as input_file:
     content = input_file.read()
+
 lines = [line for line in content.split("\n\n") if not line.startswith("--")]
+
+mae_data = list()
 for line in lines:
     line_regex = re.compile("^([0-9]*)\\. ((?s).*)$")
     regex_result = line_regex.search(line)
-    number = regex_result.group(1)
-    text = regex_result.group(2)
-    print(text)
-    try:
-        dfs = annotator.annotate(text)
 
-        output_df = pd.DataFrame()
-        for df in dfs:
-            output_df = output_df.append(df)
-        if output_df.empty:
-            continue
-        output_df = output_df.reset_index(drop=True)
-        output_df.index += 1
+    if regex_result is not None:
+        number = regex_result.group(1)
+        sentence = regex_result.group(2)
+    else:
+        raise ValueError("Incorrrect format")
 
-        print(output_df)
+    tree, tags = annotator.annotate(sentence)
 
-        counter = 1
-        file = directory + "/stanford" + number + ".conllu"
-        while os.path.exists(file):
-            file = (
-                directory + "/stanford" + number + "(" + str(counter) + ")" + ".conllu"
-            )
-            counter += 1
+    mae_data.append((tree, tags))
 
-        with open(file, "w+") as f:
-            output_df.to_csv(f, sep="\t", header=False)
-    except Exception as e:
-        print(e)
+write_mae_representation("data/goldStandard-annotated.xml", mae_data)

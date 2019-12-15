@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from ..annotator.word import LexicalTree
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from dataclasses import dataclass
+
+from igannotator.annotator.lexical_tree import LexcialTreeNode
 from igannotator.rulesexecutor.noun_classifier import nounClassifier
 from igannotator.rulesexecutor.ig_element import IGElement
 
@@ -14,20 +15,22 @@ class IGTag:
 
 class Rule(ABC):
     @abstractmethod
-    def apply(self, tree: LexicalTree, annotations: List[IGTag]):
+    def apply(self, tree: LexcialTreeNode, annotations: List[IGTag]):
         raise NotImplementedError()
 
 
-def find_word_tag(annotations: List[IGTag], word_id: str) -> IGTag:
+def find_word_tag(annotations: List[IGTag], word_id: str) -> Optional[IGTag]:
     for ann in annotations:
         for id, word in ann.words:
             if id == word_id:
                 return ann
 
+    return None
+
 
 def find_node_with_tag(
-    annotations: List[IGTag], tree: LexicalTree, ig: IGElement
-) -> LexicalTree:
+    annotations: List[IGTag], tree: LexcialTreeNode, ig: IGElement
+) -> Optional[LexcialTreeNode]:
     for t in tree.get_all_descendants():
         if find_word_igelement(annotations, t.id) == ig:
             return t
@@ -46,7 +49,7 @@ def find_word_igelement(annotations: List[IGTag], word_id: str) -> IGElement:
 #    a) jeżeli jest pochodną od słowa móc, musieć, obowiązany to bieżemy go jako deontic
 #    b) jeżeli nie jest to bierzemy go jako aIm
 class OneRootIsAimOrDeontic(Rule):
-    def apply(self, tree: LexicalTree, annotations: List[IGTag]):
+    def apply(self, tree: LexcialTreeNode, annotations: List[IGTag]):
         if len([n for n in tree.get_all_descendants() if n.relation == "root"]) != 1:
             return
 
@@ -62,7 +65,7 @@ class OneRootIsAimOrDeontic(Rule):
 
 # 2. Jeżeli korzeniem jest deontic to aIm jest root -> xcomp
 class AimIsXcompFromDeonticRoot(Rule):
-    def apply(self, tree: LexicalTree, annotations: List[IGTag]):
+    def apply(self, tree: LexcialTreeNode, annotations: List[IGTag]):
         if (
             tree.relation == "root"
             and find_word_igelement(annotations, tree.id) == IGElement.DEONTIC
@@ -84,7 +87,7 @@ class AimIsXcompFromDeonticRoot(Rule):
 
 
 class AimExtension(Rule):
-    def apply(self, tree: LexicalTree, annotations: List[IGTag]):
+    def apply(self, tree: LexcialTreeNode, annotations: List[IGTag]):
         aim_node = find_node_with_tag(annotations, tree, IGElement.AIM)
 
         if aim_node is None:
@@ -103,7 +106,7 @@ class AimExtension(Rule):
 #     a) root -> nsubj + poddrzewa
 #     b) jeżeli od root nie odchodzi nsubj to bierzemy root -> advcl + poddrzewa (jeden przykład gs 24)
 class NsubjIsAttribute(Rule):
-    def apply(self, tree: LexicalTree, annotations: List[IGTag]):
+    def apply(self, tree: LexcialTreeNode, annotations: List[IGTag]):
         found_nsubj = False
         for c in tree.children:
             if c.relation == "nsubj":
@@ -130,7 +133,7 @@ class NsubjIsAttribute(Rule):
 # 5. oBject i aCtor:
 #     a) aIm -> obj + poddrzewa  lub aIm -> iobj + poddrzewa
 class ObjsFromAimAreObjects(Rule):
-    def apply(self, tree: LexicalTree, annotations: List[IGTag]):
+    def apply(self, tree: LexcialTreeNode, annotations: List[IGTag]):
         if find_word_igelement(annotations, tree.id) != IGElement.AIM:
             return
 
@@ -141,13 +144,13 @@ class ObjsFromAimAreObjects(Rule):
                     annotations.append(
                         IGTag(
                             words=[(cc.id, cc.value) for cc in c.get_all_descendants()],
-                            tag_name=noun_type
+                            tag_name=noun_type,
                         )
                     )
 
 
 class PunctFromAimIsSeparator(Rule):
-    def apply(self, tree: LexicalTree, annotations: List[IGTag]):
+    def apply(self, tree: LexcialTreeNode, annotations: List[IGTag]):
         if find_word_igelement(annotations, tree.id) != IGElement.AIM:
             return
 

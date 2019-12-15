@@ -1,5 +1,6 @@
-from igannotator.annotator.word import LexicalTree
 from typing import List
+
+from igannotator.annotator.lexical_tree import LexcialTreeNode
 from igannotator.rulesexecutor.rules import (
     IGTag,
     AimExtension,
@@ -16,7 +17,7 @@ class RulesExecutor:
     def __init__(self, rules: List[Rule]):
         self._rules = rules
 
-    def execute(self, tree: LexicalTree) -> List[IGTag]:
+    def execute(self, tree: LexcialTreeNode) -> List[IGTag]:
         annotations: List[IGTag] = []
         for r in self._rules:
             r.apply(tree, annotations)

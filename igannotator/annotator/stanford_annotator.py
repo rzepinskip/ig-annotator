@@ -1,7 +1,8 @@
 import pandas as pd
 import stanfordnlp
 from io import StringIO
-from .annotator import BaseAnnotator
+
+from igannotator.annotator.annotator import BaseAnnotator
 
 
 class StanfordAnnotator(BaseAnnotator):
@@ -29,13 +30,13 @@ class StanfordAnnotator(BaseAnnotator):
             "deps",
             "misc",
         ]
-        return pd.read_csv(
-            StringIO(sentence), sep="\t", header=None, names=cols
-        ).set_index("id")
+        return pd.read_csv(StringIO(sentence), sep="\t", header=None, names=cols)
 
     def annotate(self, text: str):
         doc_response = self._annotator(text)
         conll_string = doc_response.conll_file.conll_as_string()
         return [
-            self._sentence_to_df(sentence) for sentence in conll_string.split("\n\n")
+            self._sentence_to_df(sentence)
+            for sentence in conll_string.split("\n\n")
+            if len(sentence) > 0
         ]

@@ -1,11 +1,12 @@
 from collections import defaultdict
-from igannotator.annotator.word import LexicalTree
-from igannotator.rulesexecutor.rules import IGTag
 from typing import List, Tuple, Dict
+
+from igannotator.annotator.lexical_tree import LexcialTreeNode
+from igannotator.rulesexecutor.rules import IGTag
 
 
 def get_sentence_and_tags(
-    tree: LexicalTree, tags: List[IGTag]
+    tree: LexcialTreeNode, tags: List[IGTag]
 ) -> Tuple[str, List[Tuple[str, int, int, str]]]:
     sentence = ""
     id_to_position = dict()
@@ -39,7 +40,7 @@ def get_sentence_and_tags(
 
 
 def write_mae_representation(
-    output_file, trees_with_tags: List[Tuple[LexicalTree, List[IGTag]]]
+    output_file, trees_with_tags: List[Tuple[LexcialTreeNode, List[IGTag]]]
 ):
     sentences_with_tags = [
         get_sentence_and_tags(tree, tags) for tree, tags in trees_with_tags
@@ -49,7 +50,7 @@ def write_mae_representation(
         output.write('<?xml version="1.0" encoding="UTF-8" ?>\n')
         output.write("<ADICO_test_1>\n")
 
-        text = "\n".join([sentence for sentence, _ in sentences_with_tags])
+        text = "\n\n".join([sentence for sentence, _ in sentences_with_tags])
         output.write(f"<TEXT><![CDATA[{text}]]></TEXT>\n")
 
         output.write("<TAGS>\n")
@@ -71,7 +72,7 @@ def write_mae_representation(
                 tag_repr = f'<{tag_name} id="{tag_to_shorthand[tag_name]}{tag_ids[tag_name]}" spans="{spans}" text="{sentence[start:stop]}" />\n'
                 output.write(tag_repr)
                 tag_ids[tag_name] += 1
-            offset += len(sentence) + 1
+            offset += len(sentence) + 2
 
         output.write("</TAGS>\n")
 
