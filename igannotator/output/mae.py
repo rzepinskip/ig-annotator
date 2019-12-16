@@ -65,14 +65,21 @@ def write_mae_representation(
             "Deontic": "D",
         }
         offset = 0
-        id = 0
+
+        all_tags = defaultdict(list)
+
         for sentence, tags in sentences_with_tags:
             for tag_name, start, stop, tag_text in tags:
                 spans = f"{offset + start}~{offset + stop}"
                 tag_repr = f'<{tag_name} id="{tag_to_shorthand[tag_name]}{tag_ids[tag_name]}" spans="{spans}" text="{sentence[start:stop]}" />\n'
-                output.write(tag_repr)
+                all_tags[tag_name].append(tag_repr)
                 tag_ids[tag_name] += 1
             offset += len(sentence) + 2
+
+
+        for tag_name in ['SEPARATOR', 'Attribute', 'Deontic', 'aIm', 'oBject', 'aCtor', 'ActivCondition', 'Method']:
+            for tag in all_tags[tag_name]:
+                output.write(tag)
 
         output.write("</TAGS>\n")
 
