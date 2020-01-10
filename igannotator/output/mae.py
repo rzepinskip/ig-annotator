@@ -11,12 +11,13 @@ def get_sentence_and_tags(
     sentence = ""
     id_to_position = dict()
     for x in tree.get_all_descendants():
+        word = str(x.value)
         if x.tag != "PUNCT" and x.id != 1:
             id_to_position[x.id] = len(sentence) + 1
-            sentence += " " + x.value
+            sentence += " " + word
         else:
             id_to_position[x.id] = len(sentence)
-            sentence += x.value
+            sentence += word
 
     tag_names = {
         "IGElement.AIM": "aIm",
@@ -65,21 +66,14 @@ def write_mae_representation(
             "Deontic": "D",
         }
         offset = 0
-
-        all_tags = defaultdict(list)
-
+        id = 0
         for sentence, tags in sentences_with_tags:
             for tag_name, start, stop, tag_text in tags:
                 spans = f"{offset + start}~{offset + stop}"
                 tag_repr = f'<{tag_name} id="{tag_to_shorthand[tag_name]}{tag_ids[tag_name]}" spans="{spans}" text="{sentence[start:stop]}" />\n'
-                all_tags[tag_name].append(tag_repr)
+                output.write(tag_repr)
                 tag_ids[tag_name] += 1
             offset += len(sentence) + 2
-
-
-        for tag_name in ['SEPARATOR', 'Attribute', 'Deontic', 'aIm', 'oBject', 'aCtor', 'ActivCondition', 'Method']:
-            for tag in all_tags[tag_name]:
-                output.write(tag)
 
         output.write("</TAGS>\n")
 
