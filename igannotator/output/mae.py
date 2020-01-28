@@ -52,6 +52,8 @@ def write_mae_representation(
         output.write("<ADICO_test_1>\n")
 
         text = "\n\n".join([sentence for sentence, _ in sentences_with_tags])
+        text = text.replace(']]>', '<![CDATA[]]]]<![CDATA[>]]')
+
         output.write(f"<TEXT><![CDATA[{text}]]></TEXT>\n")
 
         output.write("<TAGS>\n")
